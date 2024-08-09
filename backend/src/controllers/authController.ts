@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 import User, { IUser } from "../models/User";
 
 const signUp = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
   try {
-    const user = new User({ email, password });
+    const user = new User({ name, email, password });
     await user.save();
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: "1h",
