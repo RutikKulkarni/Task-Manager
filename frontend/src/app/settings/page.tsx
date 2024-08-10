@@ -5,7 +5,7 @@ import axios from "axios";
 import { API_BASE_URL } from "@/utils/config";
 
 export default function SettingsPage() {
-  const [userData, setUserData] = useState({ name: "", email: "" });
+  const [userData, setUserData] = useState<{ name: string; email: string }>({ name: "", email: "" });
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -14,12 +14,18 @@ export default function SettingsPage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/userdata`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        const token = localStorage.getItem("token");
+        if (!token) {
+          throw new Error("No token found");
+        }
+
+        const response = await axios.get(`${API_BASE_URL}/user/userdata`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
         setUserData(response.data);
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.error("Error fetching user data:", err.message || err);
+        setError("Failed to fetch user data. Please check your connection or login status.");
       }
     };
 
@@ -33,82 +39,90 @@ export default function SettingsPage() {
     }
 
     try {
-      const updates: any = {};
-      // Check if the name has changed
-      if (userData.name !== userData.name) {
-        updates.name = userData.name;
-        await axios.put(`${API_BASE_URL}/userdata/name`, { name: userData.name }, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+
+      if (userData.name) {
+        await axios.put(`${API_BASE_URL}/user/userdata/name`, { name: userData.name }, {
+          headers: { Authorization: `Bearer ${token}` },
         });
       }
 
-      // Check if the password has been provided
       if (newPassword) {
-        await axios.put(`${API_BASE_URL}/userdata/password`, { password: newPassword }, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        await axios.put(`${API_BASE_URL}/user/userdata/password`, { password: newPassword }, {
+          headers: { Authorization: `Bearer ${token}` },
         });
       }
 
       setSuccess("Settings updated successfully");
-    } catch (err) {
-      setError("Failed to update settings");
-      console.error(err);
+    } catch (err: any) {
+      console.error("Error updating settings:", err.message || err);
+      setError("Failed to update settings. Please try again.");
     }
   };
 
   return (
     <SidebarWrapper>
-      <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-4">Settings</h1>
-        {error && <div className="bg-red-500 text-white p-2 mb-4">{error}</div>}
-        {success && <div className="bg-green-500 text-white p-2 mb-4">{success}</div>}
+      <div className="container mx-auto p-6 bg-gray-800 rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold mb-4 text-white">Settings</h1>
+        {error && <div className="bg-red-600 text-white p-2 mb-4 rounded-md">{error}</div>}
+        {success && <div className="bg-green-600 text-white p-2 mb-4 rounded-md">{success}</div>}
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Name</label>
-          <input
-            type="text"
-            value={userData.name}
-            onChange={(e) => setUserData({ ...userData, name: e.target.value })}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-          />
+        <div className="grid grid-cols-1 gap-6">
+          {/* Name Input */}
+          <div className="bg-gray-700 p-4 rounded-md">
+            <label className="block text-white mb-2">Name</label>
+            <input
+              type="text"
+              value={userData.name}
+              onChange={(e) => setUserData({ ...userData, name: e.target.value })}
+              className="w-full p-2 rounded-md border border-gray-600 bg-gray-800 text-white"
+            />
+          </div>
+
+          {/* Email Input */}
+          <div className="bg-gray-700 p-4 rounded-md">
+            <label className="block text-white mb-2">Email</label>
+            <input
+              type="email"
+              value={userData.email}
+              readOnly
+              className="w-full p-2 rounded-md border border-gray-600 bg-gray-800 text-white"
+            />
+          </div>
+
+          {/* New Password Input */}
+          <div className="bg-gray-700 p-4 rounded-md">
+            <label className="block text-white mb-2">New Password</label>
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full p-2 rounded-md border border-gray-600 bg-gray-800 text-white"
+            />
+          </div>
+
+          {/* Confirm Password Input */}
+          <div className="bg-gray-700 p-4 rounded-md">
+            <label className="block text-white mb-2">Confirm New Password</label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full p-2 rounded-md border border-gray-600 bg-gray-800 text-white"
+            />
+          </div>
+
+          {/* Save Changes Button */}
+          <button
+            onClick={handleSave}
+            className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
+          >
+            Save Changes
+          </button>
         </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <input
-            type="email"
-            value={userData.email}
-            readOnly
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-100"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">New Password</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
-          />
-        </div>
-
-        <button
-          onClick={handleSave}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-        >
-          Save
-        </button>
       </div>
     </SidebarWrapper>
   );

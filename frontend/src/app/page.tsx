@@ -1,27 +1,47 @@
+// "use client";
+// import { useRouter } from "next/navigation";
+// import { useEffect, useState } from "react";
+
+// export default function Home() {
+//   const router = useRouter();
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+//   useEffect(() => {
+//     const token = localStorage.getItem("token");
+//     if (!token) {
+//       router.push("/login");
+//     } else {
+//       setIsAuthenticated(true);
+//     }
+//   }, [router]);
+
+//   if (!isAuthenticated) {
+//     return <p>Loading...</p>;
+//   }
+
+//   return (
+//     <main className="flex min-h-screen items-center justify-center p-4">
+//       <h1 className="text-2xl font-bold">Welcome to the  Page</h1>
+//     </main>
+//   );
+// }
+
+
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-export default function Home() {
+export default function MainPage() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/login");
+    if (token) {
+      router.push("/home");
     } else {
-      setIsAuthenticated(true);
+      router.push("/login");
     }
   }, [router]);
 
-  if (!isAuthenticated) {
-    return <p>Loading...</p>;
-  }
-
-  return (
-    <main className="flex min-h-screen items-center justify-center p-4">
-      <h1 className="text-2xl font-bold">Welcome to the  Page</h1>
-    </main>
-  );
+  return <p>Loading...</p>;
 }
