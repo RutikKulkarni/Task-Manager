@@ -33,8 +33,13 @@ export default function SettingsPage() {
   }, []);
 
   const handleSave = async () => {
+    if (newPassword && newPassword.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
       return;
     }
 
@@ -57,9 +62,11 @@ export default function SettingsPage() {
       }
 
       setSuccess("Settings updated successfully");
+      setError(null);
     } catch (err: any) {
       console.error("Error updating settings:", err.message || err);
       setError("Failed to update settings. Please try again.");
+      setSuccess(null);
     }
   };
 
@@ -71,7 +78,6 @@ export default function SettingsPage() {
         {success && <div className="bg-green-600 text-white p-2 mb-4 rounded-md">{success}</div>}
 
         <div className="grid grid-cols-1 gap-6">
-          {/* Name Input */}
           <div className="bg-gray-700 p-4 rounded-md">
             <label className="block text-white mb-2">Name</label>
             <input
@@ -82,7 +88,6 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* Email Input */}
           <div className="bg-gray-700 p-4 rounded-md">
             <label className="block text-white mb-2">Email</label>
             <input
@@ -93,7 +98,6 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* New Password Input */}
           <div className="bg-gray-700 p-4 rounded-md">
             <label className="block text-white mb-2">New Password</label>
             <input
@@ -104,7 +108,6 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* Confirm Password Input */}
           <div className="bg-gray-700 p-4 rounded-md">
             <label className="block text-white mb-2">Confirm New Password</label>
             <input
@@ -115,7 +118,6 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* Save Changes Button */}
           <button
             onClick={handleSave}
             className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
