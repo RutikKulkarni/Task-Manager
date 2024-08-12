@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FiHome, FiClipboard, FiSettings, FiUsers, FiBarChart2, FiBell, FiSun, FiX } from "react-icons/fi";
 import { useRouter, usePathname } from "next/navigation";
-import { API_BASE_URL } from "@/utils/config";
+import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
 
 const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
   const router = useRouter();
@@ -12,52 +12,20 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const tokenExpiry = localStorage.getItem("tokenExpiry");
+    const { token, tokenExpiry } = getTokenInfo();
     
     if (!token || (tokenExpiry && Date.now() > parseInt(tokenExpiry))) {
-      handleLogout();
+      handleLogout(router);
     } else {
       setIsAuthenticated(true);
-      fetchUserName(token);
+      fetchUserName(token)
+        .then(setUserName)
+        .catch((error) => {
+          console.error(error.message);
+          handleLogout(router);
+        });
     }
   }, [router]);
-
-  const fetchUserName = async (token: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/user/userdata`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          handleLogout();
-        } else {
-          throw new Error("Failed to fetch user data.");
-        }
-      }
-
-      const data = await response.json();
-      setUserName(data.name);
-    // } catch (error) {
-    //   console.error(error.message);
-    //   handleLogout();
-    // }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.error("An unexpected error occurred.");
-      }
-      handleLogout();
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("tokenExpiry");
-    router.push("/login");
-  };
 
   const navigateToSettings = () => {
     router.push("/settings");
@@ -88,7 +56,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             <FiBell className="text-gray-500" />
             <FiSun className="text-gray-500" />
           </div>
-          <button onClick={handleLogout} className="text-gray-600 hover:text-red-500 transition-colors duration-300 font-medium">
+          <button onClick={() => handleLogout(router)} className="text-gray-600 hover:text-red-500 transition-colors duration-300 font-medium">
             Logout
           </button>
         </div>

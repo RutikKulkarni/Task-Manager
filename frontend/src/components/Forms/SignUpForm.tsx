@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { API_BASE_URL } from "@/utils/config";
 import Link from "next/link";
+import { loginOrSignup } from "@/utils/auth";
 
 const SignUpForm = () => {
   const [name, setName] = useState("");
@@ -13,19 +13,11 @@ const SignUpForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name, email, password }),
+      const data = await loginOrSignup("/auth/signup", {
+        name,
+        email,
+        password,
       });
-
-      if (!res.ok) {
-        throw new Error("Failed to sign up");
-      }
-
-      const data = await res.json();
       localStorage.setItem("token", data.token);
       router.push("/home");
     } catch (err: any) {

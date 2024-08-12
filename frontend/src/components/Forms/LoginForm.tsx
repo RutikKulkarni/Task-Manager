@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { API_BASE_URL } from "@/utils/config";
 import Link from "next/link";
+import { loginOrSignup } from "@/utils/auth";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -12,19 +12,7 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${API_BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to login");
-      }
-
-      const data = await res.json();
+      const data = await loginOrSignup("/auth/login", { email, password });
       localStorage.setItem("token", data.token);
       router.push("/home");
     } catch (err: any) {
