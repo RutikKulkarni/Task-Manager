@@ -1,6 +1,7 @@
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { useState } from "react";
-import { FiMenu, FiX } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
+import { GoSidebarCollapse } from "react-icons/go";
 
 interface SidebarWrapperProps {
   children: React.ReactNode;
@@ -21,7 +22,8 @@ const SidebarWrapper: React.FC<SidebarWrapperProps> = ({ children }) => {
           onClick={toggleSidebar}
           className="lg:hidden text-gray-500 mb-4"
         >
-          {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+          {/* {isSidebarOpen ? <FiX size={24} /> : <GoSidebarCollapse size={24} />} */}
+          <GoSidebarCollapse size={24} />
         </button>
         {children}
       </div>

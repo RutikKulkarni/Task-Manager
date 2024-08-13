@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FiHome, FiClipboard, FiSettings, FiUsers, FiBarChart2, FiBell, FiSun, FiX } from "react-icons/fi";
+import { GoSidebarExpand } from "react-icons/go";
 import { useRouter, usePathname } from "next/navigation";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
 
@@ -27,10 +28,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
     }
   }, [router]);
 
-  const navigateToSettings = () => {
-    router.push("/settings");
-  };
-
   return (
     <div className="flex h-screen">
       <div
@@ -38,7 +35,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform transform fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 p-4 flex flex-col`}
       >
-        <div className="flex items-center justify-between mb-6 cursor-pointer" onClick={navigateToSettings}>
+        <div className="flex items-center justify-between mb-6 cursor-pointer">
           <div className="flex items-center space-x-4">
             <img
               src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
@@ -48,7 +45,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             <span className="text-gray-800 font-medium">{userName}</span>
           </div>
           <a onClick={toggleSidebar} className="lg:hidden text-gray-500">
-            <FiX size={24} />
+            <GoSidebarExpand size={20} />
           </a>
         </div>
         <div className="flex items-center px-2 justify-between mb-6">
