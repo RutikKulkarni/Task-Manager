@@ -2,14 +2,15 @@
 import React, { useState } from "react";
 
 const Dashboard = () => {
-  const [backlog, setBacklog] = useState<string[]>([]);
+  const [toDo, setToDo] = useState<string[]>([]);
   const [inProgress, setInProgress] = useState<string[]>([]);
-  const [completed, setCompleted] = useState<string[]>([]);
+  const [underReview, setUnderReview] = useState<string[]>([]);
+  const [finished, setFinished] = useState<string[]>([]);
   const [newTicket, setNewTicket] = useState<string>("");
 
   const handleAddTicket = () => {
     if (newTicket.trim() !== "") {
-      setBacklog([...backlog, newTicket]);
+      setToDo([...toDo, newTicket]);
       setNewTicket("");
     }
   };
@@ -32,28 +33,34 @@ const Dashboard = () => {
 
     if (targetColumn !== sourceColumn) {
       switch (targetColumn) {
-        case "Backlog":
-          setBacklog([...backlog, task]);
+        case "To Do":
+          setToDo([...toDo, task]);
           break;
-        case "InProgress":
+        case "In Progress":
           setInProgress([...inProgress, task]);
           break;
-        case "Completed":
-          setCompleted([...completed, task]);
+        case "Under Review":
+          setUnderReview([...underReview, task]);
+          break;
+        case "Finished":
+          setFinished([...finished, task]);
           break;
         default:
           break;
       }
 
       switch (sourceColumn) {
-        case "Backlog":
-          setBacklog(backlog.filter((t) => t !== task));
+        case "To Do":
+          setToDo(toDo.filter((t) => t !== task));
           break;
-        case "InProgress":
+        case "In Progress":
           setInProgress(inProgress.filter((t) => t !== task));
           break;
-        case "Completed":
-          setCompleted(completed.filter((t) => t !== task));
+        case "Under Review":
+          setUnderReview(underReview.filter((t) => t !== task));
+          break;
+        case "Finished":
+          setFinished(finished.filter((t) => t !== task));
           break;
         default:
           break;
@@ -79,23 +86,29 @@ const Dashboard = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 px-4">
+      <div className="grid grid-cols-4 gap-4 px-4">
         <Column
-          title="Backlog"
-          tasks={backlog}
-          onDrop={(e) => handleDrop(e, "Backlog")}
+          title="To Do"
+          tasks={toDo}
+          onDrop={(e) => handleDrop(e, "To Do")}
           onDragStart={handleDragStart}
         />
         <Column
-          title="InProgress"
+          title="In Progress"
           tasks={inProgress}
-          onDrop={(e) => handleDrop(e, "InProgress")}
+          onDrop={(e) => handleDrop(e, "In Progress")}
           onDragStart={handleDragStart}
         />
         <Column
-          title="Completed"
-          tasks={completed}
-          onDrop={(e) => handleDrop(e, "Completed")}
+          title="Under Review"
+          tasks={underReview}
+          onDrop={(e) => handleDrop(e, "Under Review")}
+          onDragStart={handleDragStart}
+        />
+        <Column
+          title="Finished"
+          tasks={finished}
+          onDrop={(e) => handleDrop(e, "Finished")}
           onDragStart={handleDragStart}
         />
       </div>
