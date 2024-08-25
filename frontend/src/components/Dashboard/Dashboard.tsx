@@ -1,26 +1,55 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import moment from "moment";
+
+interface Task {
+  title: string;
+  description: string;
+  priority: "Normal" | "Medium" | "Urgent";
+  deadline: string;
+  createdAt: Date;
+}
 
 const Dashboard = () => {
-  const [toDo, setToDo] = useState<string[]>([]);
-  const [inProgress, setInProgress] = useState<string[]>([]);
-  const [underReview, setUnderReview] = useState<string[]>([]);
-  const [finished, setFinished] = useState<string[]>([]);
-  const [newTicket, setNewTicket] = useState<string>("");
+  const [toDo, setToDo] = useState<Task[]>([]);
+  const [inProgress, setInProgress] = useState<Task[]>([]);
+  const [underReview, setUnderReview] = useState<Task[]>([]);
+  const [finished, setFinished] = useState<Task[]>([]);
+
+  const [newTicketTitle, setNewTicketTitle] = useState<string>("");
+  const [newTicketDescription, setNewTicketDescription] = useState<string>("");
+  const [newTicketPriority, setNewTicketPriority] = useState<
+    "Normal" | "Medium" | "Urgent"
+  >("Normal");
+  const [newTicketDeadline, setNewTicketDeadline] = useState<string>("");
 
   const handleAddTicket = () => {
-    if (newTicket.trim() !== "") {
-      setToDo([...toDo, newTicket]);
-      setNewTicket("");
+    if (
+      newTicketTitle.trim() !== "" &&
+      newTicketDescription.trim() !== "" &&
+      newTicketDeadline.trim() !== ""
+    ) {
+      const newTask: Task = {
+        title: newTicketTitle,
+        description: newTicketDescription,
+        priority: newTicketPriority,
+        deadline: newTicketDeadline,
+        createdAt: new Date(),
+      };
+      setToDo([...toDo, newTask]);
+      setNewTicketTitle("");
+      setNewTicketDescription("");
+      setNewTicketPriority("Normal");
+      setNewTicketDeadline("");
     }
   };
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    task: string,
+    task: Task,
     sourceColumn: string
   ) => {
-    e.dataTransfer.setData("task", task);
+    e.dataTransfer.setData("task", JSON.stringify(task));
     e.dataTransfer.setData("sourceColumn", sourceColumn);
   };
 
@@ -28,7 +57,7 @@ const Dashboard = () => {
     e: React.DragEvent<HTMLDivElement>,
     targetColumn: string
   ) => {
-    const task = e.dataTransfer.getData("task");
+    const task = JSON.parse(e.dataTransfer.getData("task")) as Task;
     const sourceColumn = e.dataTransfer.getData("sourceColumn");
 
     if (targetColumn !== sourceColumn) {
@@ -51,16 +80,16 @@ const Dashboard = () => {
 
       switch (sourceColumn) {
         case "To Do":
-          setToDo(toDo.filter((t) => t !== task));
+          setToDo(toDo.filter((t) => t.title !== task.title));
           break;
         case "In Progress":
-          setInProgress(inProgress.filter((t) => t !== task));
+          setInProgress(inProgress.filter((t) => t.title !== task.title));
           break;
         case "Under Review":
-          setUnderReview(underReview.filter((t) => t !== task));
+          setUnderReview(underReview.filter((t) => t.title !== task.title));
           break;
         case "Finished":
-          setFinished(finished.filter((t) => t !== task));
+          setFinished(finished.filter((t) => t.title !== task.title));
           break;
         default:
           break;
@@ -73,16 +102,40 @@ const Dashboard = () => {
       <div className="flex justify-center items-center py-4">
         <input
           type="text"
-          value={newTicket}
-          onChange={(e) => setNewTicket(e.target.value)}
-          placeholder="Enter new ticket"
+          value={newTicketTitle}
+          onChange={(e) => setNewTicketTitle(e.target.value)}
+          placeholder="Enter title"
           className="mr-2 p-2 border border-gray-300 rounded-lg flex-grow"
+        />
+        <input
+          type="text"
+          value={newTicketDescription}
+          onChange={(e) => setNewTicketDescription(e.target.value)}
+          placeholder="Enter description"
+          className="mr-2 p-2 border border-gray-300 rounded-lg flex-grow"
+        />
+        <select
+          value={newTicketPriority}
+          onChange={(e) =>
+            setNewTicketPriority(e.target.value as "Normal" | "Medium" | "Urgent")
+          }
+          className="mr-2 p-2 border border-gray-300 rounded-lg"
+        >
+          <option value="Normal">Normal</option>
+          <option value="Medium">Medium</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+        <input
+          type="date"
+          value={newTicketDeadline}
+          onChange={(e) => setNewTicketDeadline(e.target.value)}
+          className="mr-2 p-2 border border-gray-300 rounded-lg"
         />
         <button
           onClick={handleAddTicket}
           className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
-          Add Ticket
+          Add Task
         </button>
       </div>
 
@@ -118,11 +171,11 @@ const Dashboard = () => {
 
 interface ColumnProps {
   title: string;
-  tasks: string[];
+  tasks: Task[];
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragStart: (
     e: React.DragEvent<HTMLDivElement>,
-    task: string,
+    task: Task,
     title: string
   ) => void;
 }
@@ -142,11 +195,32 @@ const Column = ({ title, tasks, onDrop, onDragStart }: ColumnProps) => {
           draggable
           onDragStart={(e) => onDragStart(e, task, title)}
         >
-          {task}
+          <h4 className="font-bold">{task.title}</h4>
+          <p>{task.description}</p>
+          <p className={`text-sm ${getPriorityColor(task.priority)}`}>
+            Priority: {task.priority}
+          </p>
+          <p>Deadline: {task.deadline}</p>
+          <p className="text-sm text-gray-500">
+            Created {moment(task.createdAt).fromNow()}
+          </p>
         </div>
       ))}
     </div>
   );
+};
+
+const getPriorityColor = (priority: "Normal" | "Medium" | "Urgent") => {
+  switch (priority) {
+    case "Urgent":
+      return "text-red-600";
+    case "Medium":
+      return "text-yellow-600";
+    case "Normal":
+      return "text-green-600";
+    default:
+      return "";
+  }
 };
 
 export default Dashboard;
