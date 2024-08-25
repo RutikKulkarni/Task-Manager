@@ -8,6 +8,7 @@ interface Task {
   priority: "Normal" | "Medium" | "Urgent";
   deadline: string;
   createdAt: Date;
+  section: "To Do" | "In Progress" | "Under Review" | "Finished";
 }
 
 const Dashboard = () => {
@@ -22,6 +23,9 @@ const Dashboard = () => {
     "Normal" | "Medium" | "Urgent"
   >("Normal");
   const [newTicketDeadline, setNewTicketDeadline] = useState<string>("");
+  const [newTicketSection, setNewTicketSection] = useState<
+    "To Do" | "In Progress" | "Under Review" | "Finished"
+  >("To Do"); // Default section
 
   const handleAddTicket = () => {
     if (
@@ -35,12 +39,33 @@ const Dashboard = () => {
         priority: newTicketPriority,
         deadline: newTicketDeadline,
         createdAt: new Date(),
+        section: newTicketSection, // Assign selected section
       };
-      setToDo([...toDo, newTask]);
+
+      // Push to the correct section based on selected value
+      switch (newTicketSection) {
+        case "To Do":
+          setToDo([...toDo, newTask]);
+          break;
+        case "In Progress":
+          setInProgress([...inProgress, newTask]);
+          break;
+        case "Under Review":
+          setUnderReview([...underReview, newTask]);
+          break;
+        case "Finished":
+          setFinished([...finished, newTask]);
+          break;
+        default:
+          setToDo([...toDo, newTask]); // Default to 'To Do'
+          break;
+      }
+
       setNewTicketTitle("");
       setNewTicketDescription("");
       setNewTicketPriority("Normal");
       setNewTicketDeadline("");
+      setNewTicketSection("To Do"); // Reset section to default
     }
   };
 
@@ -131,6 +156,20 @@ const Dashboard = () => {
           onChange={(e) => setNewTicketDeadline(e.target.value)}
           className="mr-2 p-2 border border-gray-300 rounded-lg"
         />
+        <select
+          value={newTicketSection}
+          onChange={(e) =>
+            setNewTicketSection(
+              e.target.value as "To Do" | "In Progress" | "Under Review" | "Finished"
+            )
+          }
+          className="mr-2 p-2 border border-gray-300 rounded-lg"
+        >
+          <option value="To Do">To Do</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Finished">Finished</option>
+        </select>
         <button
           onClick={handleAddTicket}
           className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
