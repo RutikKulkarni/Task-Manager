@@ -1,5 +1,6 @@
 import { CiSearch, CiCalendar, CiSettings, CiFilter } from "react-icons/ci";
 import { IoShareOutline } from "react-icons/io5";
+import PrimaryButton  from "@/components/Button/PrimaryButton"
 
 export default function ActionBar() {
   return (
@@ -34,11 +35,7 @@ export default function ActionBar() {
           <IoShareOutline className="w-4 h-4" />
           <span className="text-sm">Share</span>
         </button>
-
-        <button className="p-2 bg-indigo-600 text-white rounded-lg flex items-center space-x-1">
-          <span className="text-sm">Create new</span>
-          <span className="text-sm">+</span>
-        </button>
+        <PrimaryButton className="bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700" >Create new task +</PrimaryButton>
       </div>
     </div>
   );

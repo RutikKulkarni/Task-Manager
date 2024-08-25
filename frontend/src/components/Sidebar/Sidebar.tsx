@@ -5,6 +5,7 @@ import { FiHome, FiClipboard, FiSettings, FiUsers, FiBarChart2, FiBell, FiSun, F
 import { GoSidebarExpand } from "react-icons/go";
 import { useRouter, usePathname } from "next/navigation";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
+import PrimaryButton  from "@/components/Button/PrimaryButton"
 
 const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
   const router = useRouter();
@@ -88,10 +89,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             <FiBarChart2 className="mr-2" /> Analytics
           </a>
         </nav>
-
-        <button className="mt-4 w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700">
-          Create new task +
-        </button>
+        <PrimaryButton className="mt-4 w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700" >Create new task +</PrimaryButton>
       </div>
     </div>
   );
