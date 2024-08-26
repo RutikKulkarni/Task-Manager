@@ -1,26 +1,79 @@
 "use client";
 import React, { useState } from "react";
+import moment from "moment";
+
+interface Task {
+  title: string;
+  description: string;
+  priority: "Normal" | "Medium" | "Urgent";
+  deadline: string;
+  createdAt: Date;
+  section: "To Do" | "In Progress" | "Under Review" | "Finished";
+}
 
 const Dashboard = () => {
-  const [toDo, setToDo] = useState<string[]>([]);
-  const [inProgress, setInProgress] = useState<string[]>([]);
-  const [underReview, setUnderReview] = useState<string[]>([]);
-  const [finished, setFinished] = useState<string[]>([]);
-  const [newTicket, setNewTicket] = useState<string>("");
+  const [toDo, setToDo] = useState<Task[]>([]);
+  const [inProgress, setInProgress] = useState<Task[]>([]);
+  const [underReview, setUnderReview] = useState<Task[]>([]);
+  const [finished, setFinished] = useState<Task[]>([]);
+
+  const [newTicketTitle, setNewTicketTitle] = useState<string>("");
+  const [newTicketDescription, setNewTicketDescription] = useState<string>("");
+  const [newTicketPriority, setNewTicketPriority] = useState<
+    "Normal" | "Medium" | "Urgent"
+  >("Normal");
+  const [newTicketDeadline, setNewTicketDeadline] = useState<string>("");
+  const [newTicketSection, setNewTicketSection] = useState<
+    "To Do" | "In Progress" | "Under Review" | "Finished"
+  >("To Do");
 
   const handleAddTicket = () => {
-    if (newTicket.trim() !== "") {
-      setToDo([...toDo, newTicket]);
-      setNewTicket("");
+    if (
+      newTicketTitle.trim() !== "" &&
+      newTicketDescription.trim() !== "" &&
+      newTicketDeadline.trim() !== ""
+    ) {
+      const newTask: Task = {
+        title: newTicketTitle,
+        description: newTicketDescription,
+        priority: newTicketPriority,
+        deadline: newTicketDeadline,
+        createdAt: new Date(),
+        section: newTicketSection,
+      };
+
+      switch (newTicketSection) {
+        case "To Do":
+          setToDo([...toDo, newTask]);
+          break;
+        case "In Progress":
+          setInProgress([...inProgress, newTask]);
+          break;
+        case "Under Review":
+          setUnderReview([...underReview, newTask]);
+          break;
+        case "Finished":
+          setFinished([...finished, newTask]);
+          break;
+        default:
+          setToDo([...toDo, newTask]);
+          break;
+      }
+
+      setNewTicketTitle("");
+      setNewTicketDescription("");
+      setNewTicketPriority("Normal");
+      setNewTicketDeadline("");
+      setNewTicketSection("To Do");
     }
   };
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    task: string,
+    task: Task,
     sourceColumn: string
   ) => {
-    e.dataTransfer.setData("task", task);
+    e.dataTransfer.setData("task", JSON.stringify(task));
     e.dataTransfer.setData("sourceColumn", sourceColumn);
   };
 
@@ -28,7 +81,7 @@ const Dashboard = () => {
     e: React.DragEvent<HTMLDivElement>,
     targetColumn: string
   ) => {
-    const task = e.dataTransfer.getData("task");
+    const task = JSON.parse(e.dataTransfer.getData("task")) as Task;
     const sourceColumn = e.dataTransfer.getData("sourceColumn");
 
     if (targetColumn !== sourceColumn) {
@@ -51,20 +104,39 @@ const Dashboard = () => {
 
       switch (sourceColumn) {
         case "To Do":
-          setToDo(toDo.filter((t) => t !== task));
+          setToDo(toDo.filter((t) => t.title !== task.title));
           break;
         case "In Progress":
-          setInProgress(inProgress.filter((t) => t !== task));
+          setInProgress(inProgress.filter((t) => t.title !== task.title));
           break;
         case "Under Review":
-          setUnderReview(underReview.filter((t) => t !== task));
+          setUnderReview(underReview.filter((t) => t.title !== task.title));
           break;
         case "Finished":
-          setFinished(finished.filter((t) => t !== task));
+          setFinished(finished.filter((t) => t.title !== task.title));
           break;
         default:
           break;
       }
+    }
+  };
+
+  const handleDeleteTask = (task: Task, section: string) => {
+    switch (section) {
+      case "To Do":
+        setToDo(toDo.filter((t) => t.title !== task.title));
+        break;
+      case "In Progress":
+        setInProgress(inProgress.filter((t) => t.title !== task.title));
+        break;
+      case "Under Review":
+        setUnderReview(underReview.filter((t) => t.title !== task.title));
+        break;
+      case "Finished":
+        setFinished(finished.filter((t) => t.title !== task.title));
+        break;
+      default:
+        break;
     }
   };
 
@@ -73,16 +145,54 @@ const Dashboard = () => {
       <div className="flex justify-center items-center py-4">
         <input
           type="text"
-          value={newTicket}
-          onChange={(e) => setNewTicket(e.target.value)}
-          placeholder="Enter new ticket"
+          value={newTicketTitle}
+          onChange={(e) => setNewTicketTitle(e.target.value)}
+          placeholder="Enter title"
           className="mr-2 p-2 border border-gray-300 rounded-lg flex-grow"
         />
+        <input
+          type="text"
+          value={newTicketDescription}
+          onChange={(e) => setNewTicketDescription(e.target.value)}
+          placeholder="Enter description"
+          className="mr-2 p-2 border border-gray-300 rounded-lg flex-grow"
+        />
+        <select
+          value={newTicketPriority}
+          onChange={(e) =>
+            setNewTicketPriority(e.target.value as "Normal" | "Medium" | "Urgent")
+          }
+          className="mr-2 p-2 border border-gray-300 rounded-lg"
+        >
+          <option value="Normal">Normal</option>
+          <option value="Medium">Medium</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+        <input
+          type="date"
+          value={newTicketDeadline}
+          onChange={(e) => setNewTicketDeadline(e.target.value)}
+          className="mr-2 p-2 border border-gray-300 rounded-lg"
+        />
+        <select
+          value={newTicketSection}
+          onChange={(e) =>
+            setNewTicketSection(
+              e.target.value as "To Do" | "In Progress" | "Under Review" | "Finished"
+            )
+          }
+          className="mr-2 p-2 border border-gray-300 rounded-lg"
+        >
+          <option value="To Do">To Do</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Finished">Finished</option>
+        </select>
         <button
           onClick={handleAddTicket}
           className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
-          Add Ticket
+          Add Task
         </button>
       </div>
 
@@ -92,24 +202,28 @@ const Dashboard = () => {
           tasks={toDo}
           onDrop={(e) => handleDrop(e, "To Do")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
         <Column
           title="In Progress"
           tasks={inProgress}
           onDrop={(e) => handleDrop(e, "In Progress")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
         <Column
           title="Under Review"
           tasks={underReview}
           onDrop={(e) => handleDrop(e, "Under Review")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
         <Column
           title="Finished"
           tasks={finished}
           onDrop={(e) => handleDrop(e, "Finished")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
       </div>
     </>
@@ -118,16 +232,27 @@ const Dashboard = () => {
 
 interface ColumnProps {
   title: string;
-  tasks: string[];
+  tasks: Task[];
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragStart: (
     e: React.DragEvent<HTMLDivElement>,
-    task: string,
+    task: Task,
     title: string
   ) => void;
+  onDeleteTask: (task: Task, section: string) => void;
 }
 
-const Column = ({ title, tasks, onDrop, onDragStart }: ColumnProps) => {
+const Column = ({ title, tasks, onDrop, onDragStart, onDeleteTask }: ColumnProps) => {
+  const [activeMenuIndex, setActiveMenuIndex] = useState<number | null>(null);
+
+  const toggleMenu = (index: number) => {
+    setActiveMenuIndex(activeMenuIndex === index ? null : index);
+  };
+
+  const closeMenu = () => {
+    setActiveMenuIndex(null);
+  };
+
   return (
     <div
       className="bg-gray-100 p-4 rounded-lg"
@@ -138,11 +263,42 @@ const Column = ({ title, tasks, onDrop, onDragStart }: ColumnProps) => {
       {tasks.map((task, index) => (
         <div
           key={index}
-          className="bg-white p-3 rounded-md mb-3 shadow-sm cursor-move"
+          className="relative cursor-move"
           draggable
           onDragStart={(e) => onDragStart(e, task, title)}
         >
-          {task}
+          <div className="bg-white p-3 rounded-md mb-3 shadow-sm">
+            <h4 className="text-md font-medium">{task.title}</h4>
+            <p className="text-sm">{task.description}</p>
+            <p className="text-xs text-gray-500">
+              Deadline: {moment(task.deadline).format("MMMM Do YYYY")}
+            </p>
+            <p className="text-xs text-gray-500">
+              Priority: <span className="font-semibold">{task.priority}</span>
+            </p>
+          </div>
+
+          {/* 3-dot Menu */}
+          <button
+            className="absolute top-2 right-2"
+            onClick={() => toggleMenu(index)}
+          >
+            •••
+          </button>
+          {activeMenuIndex === index && (
+            <div
+              className="absolute top-8 right-2 bg-white shadow-md rounded-lg p-2 z-10"
+              onBlur={closeMenu}
+              tabIndex={-1}
+            >
+              <button
+                className="text-red-500 hover:underline"
+                onClick={() => onDeleteTask(task, title)}
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
