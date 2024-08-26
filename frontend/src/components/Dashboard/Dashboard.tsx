@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 
 interface Task {
@@ -25,7 +25,7 @@ const Dashboard = () => {
   const [newTicketDeadline, setNewTicketDeadline] = useState<string>("");
   const [newTicketSection, setNewTicketSection] = useState<
     "To Do" | "In Progress" | "Under Review" | "Finished"
-  >("To Do"); // Default section
+  >("To Do");
 
   const handleAddTicket = () => {
     if (
@@ -39,10 +39,9 @@ const Dashboard = () => {
         priority: newTicketPriority,
         deadline: newTicketDeadline,
         createdAt: new Date(),
-        section: newTicketSection, // Assign selected section
+        section: newTicketSection,
       };
 
-      // Push to the correct section based on selected value
       switch (newTicketSection) {
         case "To Do":
           setToDo([...toDo, newTask]);
@@ -57,7 +56,7 @@ const Dashboard = () => {
           setFinished([...finished, newTask]);
           break;
         default:
-          setToDo([...toDo, newTask]); // Default to 'To Do'
+          setToDo([...toDo, newTask]);
           break;
       }
 
@@ -65,7 +64,7 @@ const Dashboard = () => {
       setNewTicketDescription("");
       setNewTicketPriority("Normal");
       setNewTicketDeadline("");
-      setNewTicketSection("To Do"); // Reset section to default
+      setNewTicketSection("To Do");
     }
   };
 
@@ -119,6 +118,25 @@ const Dashboard = () => {
         default:
           break;
       }
+    }
+  };
+
+  const handleDeleteTask = (task: Task, section: string) => {
+    switch (section) {
+      case "To Do":
+        setToDo(toDo.filter((t) => t.title !== task.title));
+        break;
+      case "In Progress":
+        setInProgress(inProgress.filter((t) => t.title !== task.title));
+        break;
+      case "Under Review":
+        setUnderReview(underReview.filter((t) => t.title !== task.title));
+        break;
+      case "Finished":
+        setFinished(finished.filter((t) => t.title !== task.title));
+        break;
+      default:
+        break;
     }
   };
 
@@ -184,24 +202,28 @@ const Dashboard = () => {
           tasks={toDo}
           onDrop={(e) => handleDrop(e, "To Do")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
         <Column
           title="In Progress"
           tasks={inProgress}
           onDrop={(e) => handleDrop(e, "In Progress")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
         <Column
           title="Under Review"
           tasks={underReview}
           onDrop={(e) => handleDrop(e, "Under Review")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
         <Column
           title="Finished"
           tasks={finished}
           onDrop={(e) => handleDrop(e, "Finished")}
           onDragStart={handleDragStart}
+          onDeleteTask={handleDeleteTask}
         />
       </div>
     </>
@@ -217,9 +239,20 @@ interface ColumnProps {
     task: Task,
     title: string
   ) => void;
+  onDeleteTask: (task: Task, section: string) => void;
 }
 
-const Column = ({ title, tasks, onDrop, onDragStart }: ColumnProps) => {
+const Column = ({ title, tasks, onDrop, onDragStart, onDeleteTask }: ColumnProps) => {
+  const [activeMenuIndex, setActiveMenuIndex] = useState<number | null>(null);
+
+  const toggleMenu = (index: number) => {
+    setActiveMenuIndex(activeMenuIndex === index ? null : index);
+  };
+
+  const closeMenu = () => {
+    setActiveMenuIndex(null);
+  };
+
   return (
     <div
       className="bg-gray-100 p-4 rounded-lg"
@@ -230,36 +263,46 @@ const Column = ({ title, tasks, onDrop, onDragStart }: ColumnProps) => {
       {tasks.map((task, index) => (
         <div
           key={index}
-          className="bg-white p-3 rounded-md mb-3 shadow-sm cursor-move"
+          className="relative cursor-move"
           draggable
           onDragStart={(e) => onDragStart(e, task, title)}
         >
-          <h4 className="font-bold">{task.title}</h4>
-          <p>{task.description}</p>
-          <p className={`text-sm ${getPriorityColor(task.priority)}`}>
-            Priority: {task.priority}
-          </p>
-          <p>Deadline: {task.deadline}</p>
-          <p className="text-sm text-gray-500">
-            Created {moment(task.createdAt).fromNow()}
-          </p>
+          <div className="bg-white p-3 rounded-md mb-3 shadow-sm">
+            <h4 className="text-md font-medium">{task.title}</h4>
+            <p className="text-sm">{task.description}</p>
+            <p className="text-xs text-gray-500">
+              Deadline: {moment(task.deadline).format("MMMM Do YYYY")}
+            </p>
+            <p className="text-xs text-gray-500">
+              Priority: <span className="font-semibold">{task.priority}</span>
+            </p>
+          </div>
+
+          {/* 3-dot Menu */}
+          <button
+            className="absolute top-2 right-2"
+            onClick={() => toggleMenu(index)}
+          >
+            •••
+          </button>
+          {activeMenuIndex === index && (
+            <div
+              className="absolute top-8 right-2 bg-white shadow-md rounded-lg p-2 z-10"
+              onBlur={closeMenu}
+              tabIndex={-1}
+            >
+              <button
+                className="text-red-500 hover:underline"
+                onClick={() => onDeleteTask(task, title)}
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
       ))}
     </div>
   );
-};
-
-const getPriorityColor = (priority: "Normal" | "Medium" | "Urgent") => {
-  switch (priority) {
-    case "Urgent":
-      return "text-red-600";
-    case "Medium":
-      return "text-yellow-600";
-    case "Normal":
-      return "text-green-600";
-    default:
-      return "";
-  }
 };
 
 export default Dashboard;
