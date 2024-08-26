@@ -21,7 +21,7 @@ const Dashboard = () => {
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editSection, setEditSection] = useState<string>("");
-  const [showModal, setShowModal] = useState<boolean>(false); // Manage modal visibility
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const [newTicketTitle, setNewTicketTitle] = useState<string>("");
   const [newTicketDescription, setNewTicketDescription] = useState<string>("");
@@ -30,6 +30,7 @@ const Dashboard = () => {
   const [newTicketSection, setNewTicketSection] = useState<"To Do" | "In Progress" | "Under Review" | "Finished">("To Do");
 
   const [menuOpen, setMenuOpen] = useState<{ [key: string]: boolean }>({});
+  const [moveToOpen, setMoveToOpen] = useState(null);
 
   const handleAddTicket = () => {
     if (newTicketTitle.trim() !== "" && newTicketDescription.trim() !== "" && newTicketDeadline.trim() !== "") {
@@ -60,13 +61,12 @@ const Dashboard = () => {
           break;
       }
 
-      // Reset form
       setNewTicketTitle("");
       setNewTicketDescription("");
       setNewTicketPriority("Normal");
       setNewTicketDeadline("");
       setNewTicketSection("To Do");
-      setShowModal(false); // Close the modal after adding
+      setShowModal(false);
     }
   };
 
@@ -74,7 +74,6 @@ const Dashboard = () => {
     if (editTask && editIndex !== null) {
       const updatedTask: Task = { ...editTask, createdAt: new Date() };
 
-      // Remove task from its current section
       switch (editSection) {
         case "To Do":
           setToDo(toDo.filter((_, i) => i !== editIndex));
@@ -92,7 +91,6 @@ const Dashboard = () => {
           break;
       }
 
-      // Add task to the new section
       switch (updatedTask.section) {
         case "To Do":
           setToDo([...toDo, updatedTask]);
@@ -110,14 +108,14 @@ const Dashboard = () => {
           break;
       }
 
-      setEditTask(null); // Close the edit modal after updating
+      setEditTask(null);
       setEditIndex(null);
       setEditSection("");
     }
   };
 
   const handleCancelEdit = () => {
-    setEditTask(null); // Close the edit modal without saving
+    setEditTask(null);
     setEditIndex(null);
     setEditSection("");
   };
@@ -201,7 +199,6 @@ const Dashboard = () => {
   };
 
   const handleMoveTo = (task: Task, section: string) => {
-    // Update section and move task
     const updatedTask = { ...task, section };
     handleDeleteTask(task, task.section);
     switch (section) {
@@ -226,11 +223,12 @@ const Dashboard = () => {
     }));
   };
 
+  const toggleMoveTo = (taskId) => {
+    setMoveToOpen(moveToOpen === taskId ? null : taskId);
+  };
+
   return (
     <>
-      {/* Modal for editing a task */}
-      
-
       <PrimaryButton onClick={() => setShowModal(true)} className="mt-4">
         Add New Task
       </PrimaryButton>
@@ -321,46 +319,56 @@ const Dashboard = () => {
                 </button>
                 {menuOpen[task.title] && (
                   <div className="absolute top-8 right-2 bg-white border border-gray-300 rounded-lg shadow-lg p-2">
+                  <button
+                    onClick={() => handleEditClick(task, index, column.name)}
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTask(task, column.name)}
+                    className="block px-4 py-2 text-red-600 hover:bg-red-100 w-full text-left"
+                  >
+                    Delete
+                  </button>
+                  <div className="mt-2">
                     <button
-                      onClick={() => handleEditClick(task, index, column.name)}
-                      className="block px-4 py-2 text-blue-500"
+                      onClick={() => toggleMoveTo(task.id)}
+                      className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left"
                     >
-                      Edit
+                      <p className="font-semibold">Move To</p>
                     </button>
-                    <button
-                      onClick={() => handleDeleteTask(task, column.name)}
-                      className="block px-4 py-2 text-red-500"
-                    >
-                      Delete
-                    </button>
-                    <div className="mt-2">
-                      <p className="font-semibold">Move To:</p>
-                      <button
-                        onClick={() => handleMoveTo(task, "To Do")}
-                        className="block px-4 py-1 text-blue-600"
-                      >
-                        To Do
-                      </button>
-                      <button
-                        onClick={() => handleMoveTo(task, "In Progress")}
-                        className="block px-4 py-1 text-blue-600"
-                      >
-                        In Progress
-                      </button>
-                      <button
-                        onClick={() => handleMoveTo(task, "Under Review")}
-                        className="block px-4 py-1 text-blue-600"
-                      >
-                        Under Review
-                      </button>
-                      <button
-                        onClick={() => handleMoveTo(task, "Finished")}
-                        className="block px-4 py-1 text-blue-600"
-                      >
-                        Finished
-                      </button>
-                    </div>
+                    {moveToOpen === task.id && (
+                      <div className="mt-2">
+                        {/* <p className="font-semibold">Move To</p> */}
+                        <button
+                          onClick={() => handleMoveTo(task, "To Do")}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left"
+                        >
+                          To Do
+                        </button>
+                        <button
+                          onClick={() => handleMoveTo(task, "In Progress")}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left"
+                        >
+                          In Progress
+                        </button>
+                        <button
+                          onClick={() => handleMoveTo(task, "Under Review")}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left"
+                        >
+                          Under Review
+                        </button>
+                        <button
+                          onClick={() => handleMoveTo(task, "Finished")}
+                          className="block px-4 py-2 text-gray-700 hover:bg-gray-200 w-full text-left"
+                        >
+                          Finished
+                        </button>
+                      </div>
+                    )}
                   </div>
+                </div>
                 )}
               </div>
             ))}
