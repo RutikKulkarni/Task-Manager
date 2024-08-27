@@ -44,7 +44,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, description, priority = 'Low
 
   return (
     <div
-      className="p-6 bg-white rounded-lg shadow-lg mb-4 hover:shadow-xl transition-shadow duration-300 ease-in-out"
+      className="p-4 bg-white rounded-lg shadow-lg mb-4 hover:shadow-xl transition-shadow duration-300 ease-in-out"
       draggable
       onDragStart={onDragStart}
       onDragOver={onDragOver}
@@ -58,7 +58,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, description, priority = 'Low
       <div className="flex justify-between items-center text-sm">
         <p className={`font-medium ${getPriorityStyle(priority)}`}>{priority}</p>
         {deadline && (
-          <p className="text-gray-500">Due: {format(new Date(deadline), 'MMM dd, yyyy')}</p>
+          <p className="text-gray-500">{format(new Date(deadline), 'MMM dd, yyyy')}</p>
         )}
       </div>
     </div>

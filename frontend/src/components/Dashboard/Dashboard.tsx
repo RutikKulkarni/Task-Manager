@@ -9,6 +9,15 @@ const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // useEffect(() => {
+  //   fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
+  //     headers: {
+  //       Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((data) => setTasks(data));
+  // }, []);
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
       headers: {
@@ -16,7 +25,15 @@ const Dashboard: React.FC = () => {
       },
     })
       .then((res) => res.json())
-      .then((data) => setTasks(data));
+      .then((data) => {
+        console.log(data); // Add this to inspect the response
+        if (Array.isArray(data)) {
+          setTasks(data); // Ensure it's an array
+        } else {
+          console.error("API response is not an array");
+          setTasks([]); // Set it to an empty array if the response is not an array
+        }
+      });
   }, []);
 
   const handleSaveTask = async (task: {
@@ -67,14 +84,17 @@ const Dashboard: React.FC = () => {
   return (
     <div className="p-6 pt-1">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 mt-8 space-y-4 lg:space-y-0">
-        <div className="relative mb-4 lg:mb-0">
-          <input
-            type="text"
-            placeholder="Search"
-            className="p-3 pl-10 pr-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            style={{ width: "240px", maxWidth: "100%" }}
-          />
-          <CiSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <div className="flex items-center justify-center ">
+          <div className="flex items-center border border-gray-300 rounded-lg bg-white">
+            <div className="flex items-center justify-center rounded-l-lg border-r border-gray-300 p-3">
+              <CiSearch className="w-5 h-5 text-gray-500" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search"
+              className="w-full max-w-xs p-3 text-gray-700 font-semibold outline-none bg-white rounded-r-lg focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center space-x-2 lg:space-x-4">
@@ -100,7 +120,7 @@ const Dashboard: React.FC = () => {
 
           <PrimaryButton
             onClick={() => setModalOpen(true)}
-            className="bg-gradient-to-r from-purple-400 to-purple-600 text-white py-2 px-4 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="bg-gradient-to-r from-purple-400 to-purple-600 text-white py-3 px-4 rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
           >
             Create new task +
           </PrimaryButton>
@@ -118,7 +138,7 @@ const Dashboard: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 border-b pb-3">
               {status}
             </h2>
-            <div className="space-y-6">
+            {/* <div className="space-y-6">
               {tasks
                 .filter((task) => task.status === status)
                 .map((task) => (
@@ -134,6 +154,24 @@ const Dashboard: React.FC = () => {
                     onDrop={(e) => handleDrop(e, status)}
                   />
                 ))}
+            </div> */}
+            <div className="space-y-6">
+              {Array.isArray(tasks) &&
+                tasks
+                  .filter((task) => task.status === status)
+                  .map((task) => (
+                    <TaskCard
+                      key={task._id}
+                      title={task.title}
+                      description={task.description}
+                      priority={task.priority}
+                      deadline={task.deadline}
+                      status={task.status}
+                      onDragStart={(e) => handleDragStart(e, task)}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, status)}
+                    />
+                  ))}
             </div>
           </div>
         ))}

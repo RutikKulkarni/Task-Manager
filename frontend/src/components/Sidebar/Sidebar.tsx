@@ -6,6 +6,9 @@ import { GoSidebarExpand } from "react-icons/go";
 import { useRouter, usePathname } from "next/navigation";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
 import PrimaryButton  from "@/components/Button/PrimaryButton"
+import { LuLogOut } from "react-icons/lu";
+import { FaGooglePlay } from "react-icons/fa6";
+import { FaAppStore } from "react-icons/fa6";
 
 const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
   const router = useRouter();
@@ -30,7 +33,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
   }, [router]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-100">
       <div
         className={`${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -49,12 +52,16 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             <GoSidebarExpand size={20} />
           </a>
         </div>
-        <div className="flex items-center px-2 justify-between mb-6">
-          <div className="flex items-center space-x-3">
+        <div className="flex items-center justify-between mb-8 text-white">
+          <div className="flex space-x-4">
             <FiBell className="text-gray-500" />
             <FiSun className="text-gray-500" />
           </div>
-          <button onClick={() => handleLogout(router)} className="text-gray-600 hover:text-red-500 transition-colors duration-300 font-medium">
+          <button
+            onClick={() => handleLogout(router)}
+            className="flex items-center justify-center gap-2 text-gray-600 hover:text-red-500 transition-colors duration-300 font-medium"
+          >
+            <LuLogOut />
             Logout
           </button>
         </div>
@@ -89,7 +96,15 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
             <FiBarChart2 className="mr-2" /> Analytics
           </a>
         </nav>
-        <PrimaryButton className="mt-4 w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700" >Create new task +</PrimaryButton>
+        <div className="p-2 rounded-lg text-gray-600">
+          <div className="flex mb-4">
+            <a>
+              <FaAppStore className="w-8 h-8"/>
+            </a>
+          </div>
+          <h2 className="text-lg font-semibold mb-2">Get our App!</h2>
+          <p className="text-sm mb-4">Download our app from the App Store for a better experience.</p>
+          </div>
       </div>
     </div>
   );
