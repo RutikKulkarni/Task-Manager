@@ -1,17 +1,17 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
 interface PrimaryButtonProps {
   children: ReactNode;
   onClick?: () => void;
   className?: string;
-  type?: 'button' | 'submit' | 'reset';
+  type?: "button" | "submit" | "reset";
 }
 
 const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   children,
   onClick,
-  className = '',
-  type = 'button',
+  className = "",
+  type = "button",
 }) => {
   return (
     <button

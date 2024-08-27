@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import { FiHelpCircle } from "react-icons/fi";
-import ActionBar from "@/components/ActionBar/ActionBar";
+// import ActionBar from "@/components/ActionBar/ActionBar";
 
 export default function Header() {
   const router = useRouter();
   const [userName, setUserName] = useState("");
   const [greeting, setGreeting] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const { token, tokenExpiry } = getTokenInfo();
@@ -99,7 +100,7 @@ export default function Header() {
         </div>
       </div>
 
-      <ActionBar />
+      {/* <ActionBar onOpenModal={() => setModalOpen(true)} /> */}
     </div>
   );
 }

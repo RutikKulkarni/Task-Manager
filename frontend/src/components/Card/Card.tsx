@@ -1,4 +1,6 @@
 import React from 'react';
+import { FaExclamationCircle, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
+import { format } from 'date-fns';
 
 interface TaskCardProps {
   title: string;
@@ -11,20 +13,54 @@ interface TaskCardProps {
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ title, description, priority, deadline, status, onDragStart, onDragOver, onDrop }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ title, description, priority = 'Low', deadline, status, onDragStart, onDragOver, onDrop }) => {
+  // Choose colors and icons based on priority
+  const getPriorityStyle = (priority: string) => {
+    switch (priority) {
+      case 'Urgent':
+        return 'text-red-600';
+      case 'Medium':
+        return 'text-yellow-500';
+      case 'Low':
+      default:
+        return 'text-green-500';
+    }
+  };
+
+  // Choose icons and colors based on status
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Completed':
+        return <FaCheckCircle className="text-green-500" />;
+      case 'In Progress':
+        return <FaHourglassHalf className="text-yellow-500" />;
+      case 'Under Review':
+        return <FaExclamationCircle className="text-blue-500" />;
+      case 'To-Do':
+      default:
+        return <FaExclamationCircle className="text-gray-400" />;
+    }
+  };
+
   return (
     <div
-      className="p-4 bg-gray-100 rounded mb-2 shadow"
+      className="p-6 bg-white rounded-lg shadow-lg mb-4 hover:shadow-xl transition-shadow duration-300 ease-in-out"
       draggable
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
     >
-      <h3 className="text-lg font-semibold">{title}</h3>
-      <p>{description}</p>
-      <p>Priority: {priority}</p>
-      <p>Deadline: {deadline}</p>
-      <p>Status: {status}</p>
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
+        <div>{getStatusIcon(status)}</div>
+      </div>
+      {description && <p className="text-gray-600 mb-4">{description}</p>}
+      <div className="flex justify-between items-center text-sm">
+        <p className={`font-medium ${getPriorityStyle(priority)}`}>{priority}</p>
+        {deadline && (
+          <p className="text-gray-500">Due: {format(new Date(deadline), 'MMM dd, yyyy')}</p>
+        )}
+      </div>
     </div>
   );
 };
