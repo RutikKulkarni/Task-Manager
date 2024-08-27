@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { loginOrSignup } from "@/utils/auth";
+import PrimaryButton from '@/components/Button/PrimaryButton';
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +12,19 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const data = await loginOrSignup("/auth/login", { email, password });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
       localStorage.setItem("token", data.token);
       router.push("/home");
     } catch (err: any) {
@@ -62,12 +74,12 @@ const LoginForm = () => {
           />
         </div>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-        <button
+        <PrimaryButton
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
         >
           Login
-        </button>
+        </PrimaryButton>
         <p className="mt-6 text-center text-gray-600 text-sm">
           Don’t have an account?{" "}
           <Link href="/signup" className="text-blue-600 hover:underline">

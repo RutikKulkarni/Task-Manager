@@ -1,8 +1,8 @@
 "use client";
 import SidebarWrapper from "@/components/Wrappers/SidebarWrapper";
+import PrimaryButton from '@/components/Button/PrimaryButton';
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { API_BASE_URL } from "@/utils/config";
 
 export default function SettingsPage() {
   const [userData, setUserData] = useState<{ name: string; email: string }>({ name: "", email: "" });
@@ -19,7 +19,7 @@ export default function SettingsPage() {
           throw new Error("No token found");
         }
 
-        const response = await axios.get(`${API_BASE_URL}/user/userdata`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/userdata`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUserData(response.data);
@@ -50,13 +50,13 @@ export default function SettingsPage() {
       }
 
       if (userData.name) {
-        await axios.put(`${API_BASE_URL}/user/userdata/name`, { name: userData.name }, {
+        await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/userdata/name`, { name: userData.name }, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
 
       if (newPassword) {
-        await axios.put(`${API_BASE_URL}/user/userdata/password`, { password: newPassword }, {
+        await axios.put(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/userdata/password`, { password: newPassword }, {
           headers: { Authorization: `Bearer ${token}` },
         });
       }
@@ -118,12 +118,12 @@ export default function SettingsPage() {
             />
           </div>
 
-          <button
+          <PrimaryButton
             onClick={handleSave}
             className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
           >
             Save Changes
-          </button>
+          </PrimaryButton>
         </div>
       </div>
     </SidebarWrapper>
