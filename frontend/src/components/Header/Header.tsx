@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 import { FiHelpCircle } from "react-icons/fi";
+import { IoPricetags } from "react-icons/io5";
+import { GrShareOption } from "react-icons/gr";
+import { FaEarthAmericas } from "react-icons/fa6";
 // import ActionBar from "@/components/ActionBar/ActionBar";
 
 export default function Header() {
@@ -49,11 +52,7 @@ export default function Header() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="flex flex-col md:flex-row items-center bg-gray-50 p-6 rounded-lg shadow-md">
-          <img
-            src="https://www.freestock.com/450/freestock_565266637.jpg"
-            alt="Introducing tags"
-            className="hidden lg:block w-16 h-16 mb-4 md:mb-0 md:mr-4"
-          />
+          <IoPricetags className="hidden lg:block w-16 h-16 mb-4 md:mb-0 md:mr-4" />
           <div>
             <h2 className="text-lg font-semibold text-gray-800">
               Introducing tags
@@ -66,11 +65,7 @@ export default function Header() {
         </div>
 
         <div className="flex flex-col md:flex-row items-center bg-gray-50 p-6 rounded-lg shadow-md">
-          <img
-            src="https://banner2.cleanpng.com/20181112/aiw/kisspng-share-icon-computer-icons-portable-network-graphic-no-drink-pn-5be9c53fcc92e3.0528480615420470398379.jpg"
-            alt="Share Notes Instantly"
-            className="hidden lg:block w-16 h-16 mb-4 md:mb-0 md:mr-4"
-          />
+          <GrShareOption className="hidden lg:block w-16 h-16 mb-4 md:mb-0 md:mr-4" />
           <div>
             <h2 className="text-lg font-semibold text-gray-800">
               Share Notes Instantly
@@ -83,11 +78,7 @@ export default function Header() {
         </div>
 
         <div className="flex flex-col md:flex-row items-center bg-gray-50 p-6 rounded-lg shadow-md">
-          <img
-            src="https://www.freeiconspng.com/uploads/access-icon-8.png"
-            alt="Access Anywhere"
-            className="hidden lg:block w-16 h-16 mb-4 md:mb-0 md:mr-4"
-          />
+          <FaEarthAmericas className="hidden lg:block w-16 h-16 mb-4 md:mb-0 md:mr-4" />
           <div>
             <h2 className="text-lg font-semibold text-gray-800">
               Access Anywhere
