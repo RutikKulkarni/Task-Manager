@@ -4,9 +4,9 @@ This is a web-based task management application similar to Trello. It allows use
 
 ## Live URLs
 
-- **Frontend Live URL:** [https://task-manager-pi-mauve.vercel.app/](https://task-manager-pi-mauve.vercel.app/)
-- **Backend Render URL:** [https://task-manager-habk.onrender.com/](https://task-manager-habk.onrender.com/)
-- **Backend Vercel URL:** [https://task-manager-backend-orpin.vercel.app/](https://task-manager-backend-orpin.vercel.app/)
+- **Frontend:** [Live URL](https://task-manager-pi-mauve.vercel.app/)
+- **Backend:** [Render URL](https://task-manager-habk.onrender.com/)
+- **Backend URL:** [Vercel URL](https://task-manager-backend-orpin.vercel.app/)
 
 ## Features
 
