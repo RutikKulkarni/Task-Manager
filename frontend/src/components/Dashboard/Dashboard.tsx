@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import TaskCard from "@/components/Card/Card";
 import Modal from "@/components/Modal/Modal";
 import PrimaryButton from "@/components/Button/PrimaryButton";
-import { CiSearch, CiCalendar, CiSettings, CiFilter } from "react-icons/ci";
+import { CiCalendar, CiSettings, CiFilter } from "react-icons/ci";
 import { IoShareOutline } from "react-icons/io5";
+import Search from "@/components/Search/Search";
 
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -102,19 +103,8 @@ const Dashboard: React.FC = () => {
   return (
     <div className="p-6 pt-1">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 mt-8 space-y-4 lg:space-y-0">
-        <div className="flex items-center justify-center ">
-          <div className="flex items-center border border-gray-300 rounded-lg bg-white">
-            <div className="flex items-center justify-center rounded-l-lg border-r border-gray-300 p-3">
-              <CiSearch className="w-5 h-5 text-gray-500" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-xs p-3 text-gray-700 font-semibold outline-none bg-white rounded-r-lg focus:ring-2 focus:ring-purple-500"
-            />
-          </div>
+        <div className="flex items-center justify-center">
+          <Search searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
         </div>
         {notFound && (
           <div className="text-red-500 text-center mt-4">
@@ -164,10 +154,8 @@ const Dashboard: React.FC = () => {
               {status}
             </h2>
             <div className="space-y-6">
-              {/* {Array.isArray(tasks) && */}
               {Array.isArray(searchResult) &&
                 searchResult
-                  // tasks
                   .filter((task) => task.status === status)
                   .map((task) => (
                     <TaskCard
