@@ -33,11 +33,10 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onDragStart,
   onDragOver,
   onDrop,
-  onClick, // Add this
+  onClick,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  // Choose colors and icons based on priority
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
       case "Urgent":
@@ -64,6 +63,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
         return <FaExclamationCircle className="text-gray-400" />;
     }
   };
+
+  const truncatedDescription =
+    description && description.length > 100
+      ? description.slice(0, 100) + "..."
+      : description;
 
   return (
     <div
@@ -92,7 +96,14 @@ const TaskCard: React.FC<TaskCardProps> = ({
           )}
         </div>
       </div>
-      {description && <p className="text-gray-600 mb-4">{description}</p>}
+      {description && (
+        <p
+          className="text-gray-600 mb-4"
+          // title={title}
+        >
+          {truncatedDescription}
+        </p>
+      )}
       <div className="flex justify-between items-center text-sm">
         <p className={`font-medium ${getPriorityStyle(priority)}`}>
           {priority}

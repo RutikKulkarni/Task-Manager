@@ -91,6 +91,23 @@ const Dashboard: React.FC = () => {
     setTasks([...tasks, newTask]);
   };
 
+  const handleEditTask = async (task: any) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${task._id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(task),
+      }
+    );
+    const updatedTask = await response.json();
+    setTasks(tasks.map((t) => (t._id === updatedTask._id ? updatedTask : t)));
+    setShowTaskModal(false);
+  };
+
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, task: any) => {
     e.dataTransfer.setData("task", JSON.stringify(task));
   };
@@ -188,6 +205,7 @@ const Dashboard: React.FC = () => {
           onClose={closeAllModals}
           onDelete={handleDeleteTask}
           onMove={handleMoveTask}
+          onEdit={handleEditTask}
         />
       )}
     </div>
