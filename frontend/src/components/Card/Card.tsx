@@ -18,6 +18,7 @@ interface TaskCardProps {
   onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
+  isHighlighted?: boolean; 
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
