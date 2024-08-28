@@ -38,30 +38,39 @@ const TaskModal: React.FC<TaskModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
-        <h2 className="text-2xl font-semibold mb-4">{task.title}</h2>
-        <p className="text-gray-700 mb-4">{task.description}</p>
-        <p className="text-gray-500 mb-2">
-          Priority:{" "}
-          <span className={`font-medium ${getPriorityStyle(task.priority)}`}>
-            {task.priority}
-          </span>
-        </p>
-        <p className="text-gray-500 mb-4">
-          Due Date:{" "}
-          {task.deadline && format(new Date(task.deadline), "MMM dd, yyyy")}
-        </p>
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-70 z-50">
+      <div className="bg-white p-8 rounded-lg shadow-xl max-w-lg w-full">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">{task.title}</h2>
+        <p className="text-gray-700 mb-6">{task.description}</p>
+        <div className="mb-6">
+          <p className="text-gray-600 mb-1">
+            <strong>Priority:</strong>{" "}
+            <span
+              className={`font-semibold ${getPriorityStyle(task.priority)}`}
+            >
+              {task.priority}
+            </span>
+          </p>
+          <p className="text-gray-600">
+            <strong>Due Date:</strong>{" "}
+            {task.deadline
+              ? format(new Date(task.deadline), "MMM dd, yyyy")
+              : "N/A"}
+          </p>
+        </div>
 
-        <div className="mb-4">
-          <label htmlFor="status" className="block text-gray-700 mb-2">
+        <div className="mb-6">
+          <label
+            htmlFor="status"
+            className="block text-gray-800 font-medium mb-2"
+          >
             Move to Status:
           </label>
           <select
             id="status"
             value={newStatus}
             onChange={(e) => setNewStatus(e.target.value)}
-            className="border border-gray-300 rounded p-2 w-full"
+            className="border border-gray-300 rounded-lg p-3 w-full text-gray-800"
           >
             <option value="To-Do">To-Do</option>
             <option value="In Progress">In Progress</option>
@@ -70,25 +79,25 @@ const TaskModal: React.FC<TaskModalProps> = ({
           </select>
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex space-x-4">
           <button
             onClick={() => {
               onDelete(task._id);
               onClose();
             }}
-            className="bg-red-500 text-white py-2 px-4 rounded"
+            className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition duration-300"
           >
             Delete
           </button>
           <button
             onClick={handleMove}
-            className="bg-blue-500 text-white py-2 px-4 rounded"
+            className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300"
           >
             Move
           </button>
           <button
             onClick={onClose}
-            className="bg-gray-300 text-black py-2 px-4 rounded"
+            className="bg-gray-300 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-400 transition duration-300"
           >
             Close
           </button>
