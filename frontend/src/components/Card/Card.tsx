@@ -18,7 +18,8 @@ interface TaskCardProps {
   onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
-  isHighlighted?: boolean; 
+  onClick: (id: string) => void;
+  isHighlighted?: boolean;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({
@@ -32,6 +33,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onDragStart,
   onDragOver,
   onDrop,
+  onClick, // Add this
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -72,11 +74,15 @@ const TaskCard: React.FC<TaskCardProps> = ({
       onDrop={onDrop}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => onClick(id)}
     >
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
         <div
-          onClick={() => isHovered && onDelete(id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            isHovered && onDelete(id);
+          }}
           className="cursor-pointer"
         >
           {isHovered ? (

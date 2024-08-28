@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import TaskCard from "@/components/Card/Card";
 import Modal from "@/components/Modal/Modal";
+import TaskModal from "@/components/Modal/TaskModal";
 import ActionBar from "@/components/ActionBar/ActionBar";
 
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showGenericModal, setShowGenericModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResult, setSearchResult] = useState<any[]>([]);
   const [notFound, setNotFound] = useState(false);
@@ -18,11 +21,9 @@ const Dashboard: React.FC = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (Array.isArray(data)) {
           setTasks(data);
         } else {
-          console.error("API response is not an array");
           setTasks([]);
           setSearchResult([]);
         }
@@ -50,6 +51,22 @@ const Dashboard: React.FC = () => {
       },
     });
     setTasks(tasks.filter((task) => task._id !== id));
+    setShowTaskModal(false);
+  };
+
+  const handleMoveTask = async (id: string, status: string) => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+    setTasks(
+      tasks.map((task) => (task._id === id ? { ...task, status } : task))
+    );
+    setShowTaskModal(false);
   };
 
   const handleSaveTask = async (task: {
@@ -97,13 +114,24 @@ const Dashboard: React.FC = () => {
     e.preventDefault();
   };
 
+  const openTaskModal = (id: string) => {
+    const task = tasks.find((t) => t._id === id);
+    setSelectedTask(task);
+    setShowTaskModal(true);
+  };
+
+  const closeAllModals = () => {
+    setShowTaskModal(false);
+    setShowGenericModal(false);
+  };
+
   return (
     <div className="p-6 pt-1">
       <ActionBar
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         notFound={notFound}
-        setModalOpen={setModalOpen}
+        setModalOpen={setShowGenericModal}
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -134,6 +162,7 @@ const Dashboard: React.FC = () => {
                       onDragStart={(e) => handleDragStart(e, task)}
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, status)}
+                      onClick={openTaskModal}
                       isHighlighted={task.title
                         .toLowerCase()
                         .includes(searchQuery.toLowerCase())}
@@ -144,11 +173,23 @@ const Dashboard: React.FC = () => {
         ))}
       </div>
 
-      <Modal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSave={handleSaveTask}
-      />
+      {showGenericModal && (
+        <Modal
+          isOpen={showGenericModal}
+          onClose={closeAllModals}
+          onSave={handleSaveTask}
+        />
+      )}
+
+      {showTaskModal && selectedTask && (
+        <TaskModal
+          isOpen={showTaskModal}
+          task={selectedTask}
+          onClose={closeAllModals}
+          onDelete={handleDeleteTask}
+          onMove={handleMoveTask}
+        />
+      )}
     </div>
   );
 };
