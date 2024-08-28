@@ -1,17 +1,46 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import PrimaryButton from "@/components/Button/PrimaryButton";
+import { FaSpinner } from "react-icons/fa";
 
 const SignUpForm = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (name.trim() === "") {
+      setError("Name is required");
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Invalid email format");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
@@ -25,7 +54,11 @@ const SignUpForm = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Sign up failed");
+        if (response.status === 409) {
+          throw new Error("User already exists");
+        } else {
+          throw new Error("Sign up failed, please try again later");
+        }
       }
 
       const data = await response.json();
@@ -33,11 +66,13 @@ const SignUpForm = () => {
       router.push("/home");
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center ">
+    <div className="flex justify-center items-center">
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-2xl p-12 bg-white shadow-xl rounded-lg border border-gray-200"
@@ -94,12 +129,17 @@ const SignUpForm = () => {
           />
         </div>
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-        <PrimaryButton
+        <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
+          disabled={loading}
         >
-          Sign Up
-        </PrimaryButton>
+          {loading ? (
+            <FaSpinner className="animate-spin mx-auto" />
+          ) : (
+            "Sign Up"
+          )}
+        </button>
         <p className="mt-6 text-center text-gray-600 text-sm">
           Already have an account?{" "}
           <Link href="/login" className="text-blue-600 hover:underline">

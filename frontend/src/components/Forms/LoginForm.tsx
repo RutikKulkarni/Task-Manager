@@ -1,16 +1,40 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import PrimaryButton from "@/components/Button/PrimaryButton";
+import { FaSpinner } from "react-icons/fa";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const validateEmail = (email: string) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setError("Invalid email format");
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError("Password must be at least 6 characters long");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`,
@@ -24,7 +48,13 @@ const LoginForm = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Login failed");
+        if (response.status === 401) {
+          throw new Error("Incorrect email or password");
+        } else if (response.status === 404) {
+          throw new Error("User not found");
+        } else {
+          throw new Error("Server error, please try again later");
+        }
       }
 
       const data = await response.json();
@@ -32,6 +62,8 @@ const LoginForm = () => {
       router.push("/home");
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -39,7 +71,7 @@ const LoginForm = () => {
     <div className="flex justify-center items-center ">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-2xl p-12 bg-white shadow-xl rounded-lg border border-gray-200"
+        className="w-full max-w-md p-8 bg-white shadow-xl rounded-lg border border-gray-200"
       >
         <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
           Login
@@ -76,13 +108,20 @@ const LoginForm = () => {
             required
           />
         </div>
-        {error && <p className="text-red-600 text-center mb-4">{error}</p>}
-        <PrimaryButton
+        {error && (
+          <p className="text-red-600 text-center mb-4">{error}</p>
+        )}
+        <button
           type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-600"
+          disabled={loading}
         >
-          Login
-        </PrimaryButton>
+          {loading ? (
+            <FaSpinner className="animate-spin mx-auto" />
+          ) : (
+            "Login"
+          )}
+        </button>
         <p className="mt-6 text-center text-gray-600 text-sm">
           Don’t have an account?{" "}
           <Link href="/signup" className="text-blue-600 hover:underline">
