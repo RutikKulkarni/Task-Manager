@@ -35,7 +35,7 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onDrop,
   onClick,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
 
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
@@ -76,8 +76,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      // onMouseEnter={() => setIsHovered(true)}
+      // onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(id)}
     >
       <div className="flex justify-between items-center mb-2">
@@ -85,15 +85,15 @@ const TaskCard: React.FC<TaskCardProps> = ({
         <div
           onClick={(e) => {
             e.stopPropagation();
-            isHovered && onDelete(id);
+            // isHovered && onDelete(id);
           }}
           className="cursor-pointer"
         >
-          {isHovered ? (
+          {/* {isHovered ? (
             <MdDelete className="text-red-500" />
-          ) : (
-            getStatusIcon(status)
-          )}
+          ) : ( */}
+          {getStatusIcon(status)}
+          {/* )} */}
         </div>
       </div>
       {description && (
