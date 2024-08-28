@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import {
   FiHome,
@@ -56,10 +57,12 @@ const Sidebar = ({
       >
         <div className="flex items-center justify-between mb-6 cursor-pointer">
           <div className="flex items-center space-x-4">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/219/219988.png"
+            <Image
+              src="/images/profile.png"
               alt="Profile"
-              className="w-10 h-10 rounded-full border-2 border-gray-300"
+              width={40}
+              height={40}
+              className="rounded-full border-2 border-gray-300"
             />
             <span className="text-gray-800 font-medium">{userName}</span>
           </div>

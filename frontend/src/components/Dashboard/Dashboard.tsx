@@ -118,7 +118,7 @@ const Dashboard: React.FC = () => {
         </div>
         {notFound && (
           <div className="text-red-500 text-center mt-4">
-            No results found for "{searchQuery}"
+            No results found for <b>{searchQuery}</b>
           </div>
         )}
 
