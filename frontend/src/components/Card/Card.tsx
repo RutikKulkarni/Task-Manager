@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { FaExclamationCircle, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
+import React, { useState } from "react";
+import {
+  FaExclamationCircle,
+  FaCheckCircle,
+  FaHourglassHalf,
+} from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 interface TaskCardProps {
   id: string;
@@ -16,32 +20,43 @@ interface TaskCardProps {
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ id, title, description, priority = 'Low', deadline, status, onDelete, onDragStart, onDragOver, onDrop }) => {
+const TaskCard: React.FC<TaskCardProps> = ({
+  id,
+  title,
+  description,
+  priority = "Low",
+  deadline,
+  status,
+  onDelete,
+  onDragStart,
+  onDragOver,
+  onDrop,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   // Choose colors and icons based on priority
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
-      case 'Urgent':
-        return 'text-red-600';
-      case 'Medium':
-        return 'text-yellow-500';
-      case 'Low':
+      case "Urgent":
+        return "text-red-600";
+      case "Medium":
+        return "text-yellow-500";
+      case "Low":
       default:
-        return 'text-green-500';
+        return "text-green-500";
     }
   };
 
   // Choose icons and colors based on status
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'Completed':
+      case "Completed":
         return <FaCheckCircle className="text-green-500" />;
-      case 'In Progress':
+      case "In Progress":
         return <FaHourglassHalf className="text-yellow-500" />;
-      case 'Under Review':
+      case "Under Review":
         return <FaExclamationCircle className="text-blue-500" />;
-      case 'To-Do':
+      case "To-Do":
       default:
         return <FaExclamationCircle className="text-gray-400" />;
     }
@@ -59,15 +74,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ id, title, description, priority = 
     >
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
-        <div onClick={() => isHovered && onDelete(id)} className="cursor-pointer">
-          {isHovered ? <MdDelete className="text-red-500" /> : getStatusIcon(status)}
+        <div
+          onClick={() => isHovered && onDelete(id)}
+          className="cursor-pointer"
+        >
+          {isHovered ? (
+            <MdDelete className="text-red-500" />
+          ) : (
+            getStatusIcon(status)
+          )}
         </div>
       </div>
       {description && <p className="text-gray-600 mb-4">{description}</p>}
       <div className="flex justify-between items-center text-sm">
-        <p className={`font-medium ${getPriorityStyle(priority)}`}>{priority}</p>
+        <p className={`font-medium ${getPriorityStyle(priority)}`}>
+          {priority}
+        </p>
         {deadline && (
-          <p className="text-gray-500">{format(new Date(deadline), 'MMM dd, yyyy')}</p>
+          <p className="text-gray-500">
+            {format(new Date(deadline), "MMM dd, yyyy")}
+          </p>
         )}
       </div>
     </div>

@@ -1,16 +1,31 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FiHome, FiClipboard, FiSettings, FiUsers, FiBarChart2, FiBell, FiSun, FiX } from "react-icons/fi";
+import {
+  FiHome,
+  FiClipboard,
+  FiSettings,
+  FiUsers,
+  FiBarChart2,
+  FiBell,
+  FiSun,
+  FiX,
+} from "react-icons/fi";
 import { GoSidebarExpand } from "react-icons/go";
 import { useRouter, usePathname } from "next/navigation";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
-import PrimaryButton  from "@/components/Button/PrimaryButton"
+import PrimaryButton from "@/components/Button/PrimaryButton";
 import { LuLogOut } from "react-icons/lu";
 import { FaGooglePlay } from "react-icons/fa6";
 import { FaAppStore } from "react-icons/fa6";
 
-const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: () => void }) => {
+const Sidebar = ({
+  isOpen,
+  toggleSidebar,
+}: {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -18,7 +33,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
 
   useEffect(() => {
     const { token, tokenExpiry } = getTokenInfo();
-    
+
     if (!token || (tokenExpiry && Date.now() > parseInt(tokenExpiry))) {
       handleLogout(router);
     } else {
@@ -76,7 +91,10 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
           >
             <FiHome className="mr-2" /> Home
           </Link>
-          <a href="#" className="flex items-center p-2 text-gray-600 hover:bg-gray-100">
+          <a
+            href="#"
+            className="flex items-center p-2 text-gray-600 hover:bg-gray-100"
+          >
             <FiClipboard className="mr-2" /> Boards
           </a>
           <Link
@@ -89,22 +107,30 @@ const Sidebar = ({ isOpen, toggleSidebar }: { isOpen: boolean; toggleSidebar: ()
           >
             <FiSettings className="mr-2" /> Settings
           </Link>
-          <a href="#" className="flex items-center p-2 text-gray-600 hover:bg-gray-100">
+          <a
+            href="#"
+            className="flex items-center p-2 text-gray-600 hover:bg-gray-100"
+          >
             <FiUsers className="mr-2" /> Teams
           </a>
-          <a href="#" className="flex items-center p-2 text-gray-600 hover:bg-gray-100">
+          <a
+            href="#"
+            className="flex items-center p-2 text-gray-600 hover:bg-gray-100"
+          >
             <FiBarChart2 className="mr-2" /> Analytics
           </a>
         </nav>
         <div className="p-2 rounded-lg text-gray-600">
           <div className="flex mb-4">
             <a>
-              <FaAppStore className="w-8 h-8"/>
+              <FaAppStore className="w-8 h-8" />
             </a>
           </div>
           <h2 className="text-lg font-semibold mb-2">Get our App!</h2>
-          <p className="text-sm mb-4">Download our app from the App Store for a better experience.</p>
-          </div>
+          <p className="text-sm mb-4">
+            Download our app from the App Store for a better experience.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -8,6 +8,9 @@ import { IoShareOutline } from "react-icons/io5";
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResult, setSearchResult] = useState<any[]>([]);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
@@ -23,9 +26,23 @@ const Dashboard: React.FC = () => {
         } else {
           console.error("API response is not an array");
           setTasks([]);
+          setSearchResult([]);
         }
       });
   }, []);
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setSearchResult(tasks);
+      setNotFound(false);
+    } else {
+      const filteredTasks = tasks.filter((task) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResult(filteredTasks);
+      setNotFound(filteredTasks.length === 0);
+    }
+  }, [searchQuery, tasks]);
 
   const handleDeleteTask = async (id: string) => {
     await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
@@ -36,7 +53,6 @@ const Dashboard: React.FC = () => {
     });
     setTasks(tasks.filter((task) => task._id !== id));
   };
-
 
   const handleSaveTask = async (task: {
     title: string;
@@ -94,10 +110,17 @@ const Dashboard: React.FC = () => {
             <input
               type="text"
               placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full max-w-xs p-3 text-gray-700 font-semibold outline-none bg-white rounded-r-lg focus:ring-2 focus:ring-purple-500"
             />
           </div>
         </div>
+        {notFound && (
+          <div className="text-red-500 text-center mt-4">
+            No results found for "{searchQuery}"
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center space-x-2 lg:space-x-4">
           <button className="flex items-center space-x-2 p-3 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500">
@@ -141,8 +164,10 @@ const Dashboard: React.FC = () => {
               {status}
             </h2>
             <div className="space-y-6">
-              {Array.isArray(tasks) &&
-                tasks
+              {/* {Array.isArray(tasks) && */}
+              {Array.isArray(searchResult) &&
+                searchResult
+                  // tasks
                   .filter((task) => task.status === status)
                   .map((task) => (
                     <TaskCard
@@ -157,6 +182,9 @@ const Dashboard: React.FC = () => {
                       onDragStart={(e) => handleDragStart(e, task)}
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, status)}
+                      isHighlighted={task.title
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())}
                     />
                   ))}
             </div>

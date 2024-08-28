@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import PrimaryButton from '@/components/Button/PrimaryButton';
+import PrimaryButton from "@/components/Button/PrimaryButton";
 
 const SignUpForm = () => {
   const [name, setName] = useState("");
@@ -13,16 +13,19 @@ const SignUpForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Sign up failed');
+        throw new Error("Sign up failed");
       }
 
       const data = await response.json();
