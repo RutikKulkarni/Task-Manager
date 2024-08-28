@@ -9,15 +9,6 @@ const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // useEffect(() => {
-  //   fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
-  //     headers: {
-  //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => setTasks(data));
-  // }, []);
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks`, {
       headers: {
@@ -26,15 +17,26 @@ const Dashboard: React.FC = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data); // Add this to inspect the response
+        console.log(data);
         if (Array.isArray(data)) {
-          setTasks(data); // Ensure it's an array
+          setTasks(data);
         } else {
           console.error("API response is not an array");
-          setTasks([]); // Set it to an empty array if the response is not an array
+          setTasks([]);
         }
       });
   }, []);
+
+  const handleDeleteTask = async (id: string) => {
+    await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/tasks/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    setTasks(tasks.filter((task) => task._id !== id));
+  };
+
 
   const handleSaveTask = async (task: {
     title: string;
@@ -138,23 +140,6 @@ const Dashboard: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 border-b pb-3">
               {status}
             </h2>
-            {/* <div className="space-y-6">
-              {tasks
-                .filter((task) => task.status === status)
-                .map((task) => (
-                  <TaskCard
-                    key={task._id}
-                    title={task.title}
-                    description={task.description}
-                    priority={task.priority}
-                    deadline={task.deadline}
-                    status={task.status}
-                    onDragStart={(e) => handleDragStart(e, task)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, status)}
-                  />
-                ))}
-            </div> */}
             <div className="space-y-6">
               {Array.isArray(tasks) &&
                 tasks
@@ -162,11 +147,13 @@ const Dashboard: React.FC = () => {
                   .map((task) => (
                     <TaskCard
                       key={task._id}
+                      id={task._id}
                       title={task.title}
                       description={task.description}
                       priority={task.priority}
                       deadline={task.deadline}
                       status={task.status}
+                      onDelete={handleDeleteTask}
                       onDragStart={(e) => handleDragStart(e, task)}
                       onDragOver={handleDragOver}
                       onDrop={(e) => handleDrop(e, status)}

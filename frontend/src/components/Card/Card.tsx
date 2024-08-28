@@ -1,19 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaExclamationCircle, FaCheckCircle, FaHourglassHalf } from 'react-icons/fa';
+import { MdDelete } from "react-icons/md";
 import { format } from 'date-fns';
 
 interface TaskCardProps {
+  id: string;
   title: string;
   description?: string;
   priority?: string;
   deadline?: string;
   status: string;
+  onDelete: (id: string) => void;
   onDragStart: (e: React.DragEvent<HTMLDivElement>) => void;
   onDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (e: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ title, description, priority = 'Low', deadline, status, onDragStart, onDragOver, onDrop }) => {
+const TaskCard: React.FC<TaskCardProps> = ({ id, title, description, priority = 'Low', deadline, status, onDelete, onDragStart, onDragOver, onDrop }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   // Choose colors and icons based on priority
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
@@ -49,10 +54,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ title, description, priority = 'Low
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
-        <div>{getStatusIcon(status)}</div>
+        <div onClick={() => isHovered && onDelete(id)} className="cursor-pointer">
+          {isHovered ? <MdDelete className="text-red-500" /> : getStatusIcon(status)}
+        </div>
       </div>
       {description && <p className="text-gray-600 mb-4">{description}</p>}
       <div className="flex justify-between items-center text-sm">
