@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FaExclamationCircle,
   FaCheckCircle,
@@ -35,21 +35,18 @@ const TaskCard: React.FC<TaskCardProps> = ({
   onDrop,
   onClick,
 }) => {
-  // const [isHovered, setIsHovered] = useState(false);
-
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
       case "Urgent":
-        return "text-red-600";
+        return "bg-red-100 text-red-800";
       case "Medium":
-        return "text-yellow-500";
+        return "bg-yellow-100 text-yellow-800";
       case "Low":
       default:
-        return "text-green-500";
+        return "bg-green-100 text-green-800";
     }
   };
 
-  // Choose icons and colors based on status
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "Completed":
@@ -71,13 +68,11 @@ const TaskCard: React.FC<TaskCardProps> = ({
 
   return (
     <div
-      className="p-4 bg-white rounded-lg shadow-lg mb-4 hover:shadow-xl transition-shadow duration-300 ease-in-out"
+      className="p-4 bg-white rounded-lg shadow-sm mb-4 hover:shadow-md transition-shadow duration-300 ease-in-out"
       draggable
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
-      // onMouseEnter={() => setIsHovered(true)}
-      // onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(id)}
     >
       <div className="flex justify-between items-center mb-2">
@@ -85,27 +80,21 @@ const TaskCard: React.FC<TaskCardProps> = ({
         <div
           onClick={(e) => {
             e.stopPropagation();
-            // isHovered && onDelete(id);
           }}
           className="cursor-pointer"
         >
-          {/* {isHovered ? (
-            <MdDelete className="text-red-500" />
-          ) : ( */}
           {getStatusIcon(status)}
-          {/* )} */}
         </div>
       </div>
       {description && (
-        <p
-          className="text-gray-600 mb-4"
-          // title={title}
-        >
-          {truncatedDescription}
-        </p>
+        <p className="text-gray-600 mb-4">{truncatedDescription}</p>
       )}
       <div className="flex justify-between items-center text-sm">
-        <p className={`font-medium ${getPriorityStyle(priority)}`}>
+        <p
+          className={`font-medium py-1 px-2 rounded-full ${getPriorityStyle(
+            priority
+          )}`}
+        >
           {priority}
         </p>
         {deadline && (
