@@ -38,12 +38,12 @@ const TaskCard: React.FC<TaskCardProps> = ({
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
       case "Urgent":
-        return "bg-red-100 text-red-800";
+        return "bg-red-100 text-red-800 border-red-300";
       case "Medium":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
       case "Low":
       default:
-        return "bg-green-100 text-green-800";
+        return "bg-green-100 text-green-800 border-green-300";
     }
   };
 
@@ -68,37 +68,39 @@ const TaskCard: React.FC<TaskCardProps> = ({
 
   return (
     <div
-      className="p-4 bg-white rounded-lg shadow-sm mb-4 hover:shadow-md transition-shadow duration-300 ease-in-out"
+      className={`p-6 bg-white rounded-lg shadow-lg mb-4 hover:shadow-2xl transition-shadow duration-300 ease-in-out border-l-4 ${getPriorityStyle(
+        priority
+      )}`}
       draggable
       onDragStart={onDragStart}
       onDragOver={onDragOver}
       onDrop={onDrop}
       onClick={() => onClick(id)}
     >
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-2xl font-semibold text-gray-800">{title}</h3>
         <div
           onClick={(e) => {
             e.stopPropagation();
           }}
-          className="cursor-pointer"
+          className="cursor-pointer text-lg"
         >
           {getStatusIcon(status)}
         </div>
       </div>
       {description && (
-        <p className="text-gray-600 mb-4">{truncatedDescription}</p>
+        <p className="text-gray-700 mb-4">{truncatedDescription}</p>
       )}
       <div className="flex justify-between items-center text-sm">
         <p
-          className={`font-medium py-1 px-2 rounded-full ${getPriorityStyle(
+          className={`font-medium py-1 px-3 rounded-full border ${getPriorityStyle(
             priority
           )}`}
         >
           {priority}
         </p>
         {deadline && (
-          <p className="text-gray-500">
+          <p className="text-gray-600">
             {format(new Date(deadline), "MMM dd, yyyy")}
           </p>
         )}
