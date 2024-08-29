@@ -27,7 +27,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   if (!isOpen || !task) return null;
 
-  // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
 
   const getPriorityStyle = (priority: string) => {

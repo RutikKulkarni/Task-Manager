@@ -20,7 +20,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
   const [deadline, setDeadline] = useState("");
   const [status, setStatus] = useState("To-Do");
 
-  // Get today's date in YYYY-MM-DD format
   const today = new Date().toISOString().split('T')[0];
 
   const handleSubmit = () => {
