@@ -20,6 +20,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
   const [deadline, setDeadline] = useState("");
   const [status, setStatus] = useState("To-Do");
 
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+
   const handleSubmit = () => {
     onSave({ title, description, priority, deadline, status });
     // Reset the form fields
@@ -70,6 +73,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
           type="date"
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
+          min={today}
           className="border border-gray-300 rounded-lg p-4 mb-4 w-full text-gray-700 bg-gray-100 focus:ring-2 focus:ring-purple-400 transition duration-200 ease-in-out"
         />
 

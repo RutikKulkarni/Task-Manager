@@ -27,6 +27,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   if (!isOpen || !task) return null;
 
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+
   const getPriorityStyle = (priority: string) => {
     switch (priority) {
       case "Urgent":
@@ -58,7 +61,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full mx-4 sm:mx-0">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-900">{isEditing ? "Edit Task" : task.title}</h2>
-          {/* <IoIosCloseCircleOutline onClick={onClose} className="w-6 h-6 text-gray-500 hover:text-gray-700 transition duration-200 cursor-pointer"/> */}
           <button
             onClick={onClose}
             className="flex items-center space-x-2 p-2 rounded transition duration-200 cursor-pointer"
@@ -102,31 +104,6 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 <option value="Completed">Completed</option>
               </select>
             </div>
-            {/* <div className="flex space-x-4">
-              <button
-                onClick={handleMove}
-                className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:text-blue-700 transition duration-300 border-none flex items-center space-x-2"
-              >
-                <span>Move</span>
-              </button>
-              <button
-                onClick={handleEdit}
-                className="text-black py-2 px-4 rounded-lg hover:underline transition duration-300 border-none flex items-center space-x-2"
-              >
-                <IoMdCreate className="w-5 h-5" />
-                <span>{isEditing ? "Cancel" : "Edit"}</span>
-              </button>
-              <button
-                onClick={() => {
-                  onDelete(task._id);
-                  onClose();
-                }}
-                className="text-red-600 py-2 px-4 rounded-lg hover:text-red-700 transition duration-300 border-none flex items-center space-x-2"
-              >
-                <IoIosCloseCircleOutline className="w-5 h-5" />
-                <span>Delete Task</span>
-              </button>
-            </div> */}
             <div className="flex justify-between items-center">
               <div className="flex space-x-4">
                 <button
@@ -204,6 +181,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
                 type="date"
                 value={editedTask.deadline ? format(new Date(editedTask.deadline), "yyyy-MM-dd") : ""}
                 onChange={(e) => setEditedTask({ ...editedTask, deadline: e.target.value })}
+                min={today}
                 className="border border-gray-300 rounded-lg p-3 w-full bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
