@@ -15,29 +15,31 @@ export default function SettingsPage() {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No token found");
-        }
-
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/userdata`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
+    if (typeof window !== "undefined") {
+      const fetchUserData = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) {
+            throw new Error("No token found");
           }
-        );
-        setUserData(response.data);
-      } catch (err: any) {
-        console.error("Error fetching user data:", err.message || err);
-        setError(
-          "Failed to fetch user data. Please check your connection or login status."
-        );
-      }
-    };
 
-    fetchUserData();
+          const response = await axios.get(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/user/userdata`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setUserData(response.data);
+        } catch (err: any) {
+          console.error("Error fetching user data:", err.message || err);
+          setError(
+            "Failed to fetch user data. Please check your connection or login status."
+          );
+        }
+      };
+
+      fetchUserData();
+    }
   }, []);
 
   const handleSave = async () => {
