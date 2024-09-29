@@ -10,15 +10,14 @@ import {
   FiBarChart2,
   FiBell,
   FiSun,
-  FiX,
+  FiMoon,
 } from "react-icons/fi";
 import { GoSidebarExpand } from "react-icons/go";
 import { useRouter, usePathname } from "next/navigation";
 import { getTokenInfo, fetchUserName, handleLogout } from "@/utils/auth";
-import PrimaryButton from "@/components/Button/PrimaryButton";
 import { LuLogOut } from "react-icons/lu";
-import { FaGooglePlay } from "react-icons/fa6";
 import { FaAppStore } from "react-icons/fa6";
+import { applyTheme, getInitialTheme } from "@/utils/theme";
 
 const Sidebar = ({
   isOpen,
@@ -31,6 +30,7 @@ const Sidebar = ({
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
+  const [theme, setTheme] = useState(getInitialTheme());
 
   useEffect(() => {
     const { token, tokenExpiry } = getTokenInfo();
@@ -46,14 +46,21 @@ const Sidebar = ({
           handleLogout(router);
         });
     }
-  }, [router]);
+    applyTheme(theme);
+  }, [router, theme]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    applyTheme(newTheme);
+  };
 
   return (
     <div className="flex h-100">
       <div
         className={`${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 transition-transform transform fixed lg:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 p-4 flex flex-col`}
+        } lg:translate-x-0 transition-transform transform fixed lg:static inset-y-0 left-0 w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 flex flex-col`}
       >
         <div className="flex items-center justify-between mb-6 cursor-pointer">
           <div className="flex items-center space-x-4">
@@ -62,22 +69,33 @@ const Sidebar = ({
               alt="Profile"
               width={40}
               height={40}
-              className="rounded-full border-2 border-gray-300"
+              className="rounded-full border-2 border-gray-300 dark:border-gray-600"
             />
-            <span className="text-gray-800 font-medium">{userName}</span>
+            <span className="text-gray-800 dark:text-gray-200 font-medium">
+              {userName}
+            </span>
           </div>
-          <a onClick={toggleSidebar} className="lg:hidden text-gray-500">
+          <a
+            onClick={toggleSidebar}
+            className="lg:hidden text-gray-500 dark:text-gray-200"
+          >
             <GoSidebarExpand size={20} />
           </a>
         </div>
-        <div className="flex items-center justify-between mb-8 text-white">
+        <div className="flex items-center justify-between mb-8">
           <div className="flex space-x-4">
-            <FiBell className="text-gray-500" />
-            <FiSun className="text-gray-500" />
+            <FiBell className="text-gray-500 dark:text-gray-200" />
+            <button onClick={toggleTheme}>
+              {theme === "light" ? (
+                <FiSun className="text-gray-500 dark:text-gray-200" />
+              ) : (
+                <FiMoon className="text-gray-500 dark:text-gray-200" />
+              )}
+            </button>
           </div>
           <button
             onClick={() => handleLogout(router)}
-            className="flex items-center justify-center gap-2 text-gray-600 hover:text-red-500 transition-colors duration-300 font-medium"
+            className="flex items-center justify-center gap-2 text-gray-600 dark:text-gray-200 hover:text-red-500 transition-colors duration-300 font-medium"
           >
             <LuLogOut />
             Logout
@@ -89,14 +107,14 @@ const Sidebar = ({
             className={`flex items-center p-2 rounded-lg transition-all duration-300 ${
               pathname === "/home"
                 ? "bg-gradient-to-r from-purple-400 to-purple-600 text-white shadow-lg transform scale-105 font-semibold"
-                : "text-gray-600 hover:bg-gray-200 hover:scale-105"
+                : "text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105"
             }`}
           >
             <FiHome className="mr-2" /> Home
           </Link>
           <a
             href="#"
-            className="flex items-center p-2 text-gray-600 hover:bg-gray-100"
+            className="flex items-center p-2 text-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <FiClipboard className="mr-2" /> Boards
           </a>
@@ -105,25 +123,25 @@ const Sidebar = ({
             className={`flex items-center p-2 rounded-lg transition-all duration-300 ${
               pathname === "/settings"
                 ? "bg-gradient-to-r from-purple-400 to-purple-600 text-white shadow-lg transform scale-105 font-semibold"
-                : "text-gray-600 hover:bg-gray-200 hover:scale-105"
+                : "text-gray-600 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105"
             }`}
           >
             <FiSettings className="mr-2" /> Settings
           </Link>
           <a
             href="#"
-            className="flex items-center p-2 text-gray-600 hover:bg-gray-100"
+            className="flex items-center p-2 text-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <FiUsers className="mr-2" /> Teams
           </a>
           <a
             href="#"
-            className="flex items-center p-2 text-gray-600 hover:bg-gray-100"
+            className="flex items-center p-2 text-gray-600 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
           >
             <FiBarChart2 className="mr-2" /> Analytics
           </a>
         </nav>
-        <div className="p-2 rounded-lg text-gray-600">
+        <div className="p-2 rounded-lg text-gray-600 dark:text-gray-200">
           <div className="flex mb-4">
             <a>
               <FaAppStore className="w-8 h-8" />

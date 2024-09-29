@@ -14,7 +14,7 @@ export default function LoginPage() {
   }, [router]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex min-h-screen items-center justify-center p-4 bg-gray-100 dark:bg-gray-900">
       <LoginForm />
     </main>
   );

@@ -88,23 +88,25 @@ export default function SettingsPage() {
 
   return (
     <SidebarWrapper>
-      <div className="container p-8 bg-gray-100 rounded-lg shadow-lg">
-        <h1 className="text-4xl font-bold mb-6 text-gray-800">Settings</h1>
+      <div className="container p-8 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-lg">
+        <h1 className="text-4xl font-bold mb-6 text-gray-800 dark:text-gray-200">
+          Settings
+        </h1>
 
         {error && (
-          <div className="bg-red-500 text-white p-4 rounded-md mb-4 font-semibold">
+          <div className="bg-red-500 dark:bg-red-700 text-white p-4 rounded-md mb-4 font-semibold">
             {error}
           </div>
         )}
         {success && (
-          <div className="bg-green-500 text-white p-4 rounded-md mb-4 font-semibold">
+          <div className="bg-green-500 dark:bg-green-700 text-white p-4 rounded-md mb-4 font-semibold">
             {success}
           </div>
         )}
 
         <div className="space-y-8">
           <div>
-            <label className="block text-lg text-gray-700 font-medium mb-2">
+            <label className="block text-lg text-gray-700 dark:text-gray-300 font-medium mb-2">
               Name
             </label>
             <input
@@ -113,49 +115,49 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setUserData({ ...userData, name: e.target.value })
               }
-              className="w-full p-4 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-150"
+              className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 shadow-sm transition duration-150"
             />
           </div>
 
           <div>
-            <label className="block text-lg text-gray-700 font-medium mb-2">
+            <label className="block text-lg text-gray-700 dark:text-gray-300 font-medium mb-2">
               Email
             </label>
             <input
               type="email"
               value={userData.email}
               readOnly
-              className="w-full p-4 rounded-lg border border-gray-300 bg-gray-100 text-gray-600 focus:outline-none shadow-sm transition duration-150"
+              className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 focus:outline-none shadow-sm transition duration-150"
             />
           </div>
 
           <div>
-            <label className="block text-lg text-gray-700 font-medium mb-2">
+            <label className="block text-lg text-gray-700 dark:text-gray-300 font-medium mb-2">
               New Password
             </label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-4 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-150"
+              className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 shadow-sm transition duration-150"
             />
           </div>
 
           <div>
-            <label className="block text-lg text-gray-700 font-medium mb-2">
+            <label className="block text-lg text-gray-700 dark:text-gray-300 font-medium mb-2">
               Confirm New Password
             </label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-4 rounded-lg border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-150"
+              className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 shadow-sm transition duration-150"
             />
           </div>
 
           <button
             onClick={handleSave}
-            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold shadow-lg transition duration-150"
+            className="w-full py-4 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg font-semibold shadow-lg transition duration-150"
           >
             Save Changes
           </button>
