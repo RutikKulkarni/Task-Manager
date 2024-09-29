@@ -30,7 +30,7 @@ const Sidebar = ({
   const pathname = usePathname();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
-  const [theme, setTheme] = useState(getInitialTheme());
+  const [theme, setTheme] = useState(getInitialTheme() || "light");
 
   useEffect(() => {
     const { token, tokenExpiry } = getTokenInfo();
@@ -46,6 +46,7 @@ const Sidebar = ({
           handleLogout(router);
         });
     }
+
     applyTheme(theme);
   }, [router, theme]);
 
